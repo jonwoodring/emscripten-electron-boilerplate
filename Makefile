@@ -1,3 +1,6 @@
+MAKEFLAGS += --no-builtin-rules
+.SUFFIXES:
+	
 # 
 # executables
 #
@@ -28,8 +31,17 @@ W_FLAGS = --verbose --display-reasons --debug --display-modules --display-error-
 
 SRC = src
 
-MAIN_C = main
-RNDR_C = rndr
+MAIN = main
+RNDR = rndr
+
+MAIN_C = $(addsuffix .c,$(MAIN))
+RNDR_C = $(addsuffix .c,$(RNDR))
+
+MAIN_RO = $(addsuffix .r.bc,$(MAIN))
+RNDR_RO = $(addsuffix .r.bc,$(RNDR))
+
+MAIN_DO = $(addsuffix .d.bc,$(MAIN))
+RNDR_DO = $(addsuffix .d.bc,$(RNDR))
 
 MAIN_PRE = main-pre.js
 RNDR_PRE = rndr-pre.js
@@ -60,31 +72,29 @@ PACK = pack
 
 all: release
 
-%.r.bc: CFLAGS = $(REL_FLAGS)
 %.r.bc: %.c
 	$(EMCC) $(CFLAGS) $(E_FLAGS) $< -o $@
 
-%.d.bc: CFLAGS = $(DBG_FLAGS)
 %.d.bc: %.c
 	$(EMCC) $(CFLAGS) $(E_FLAGS) $< -o $@
 
 $(REL_PRE)/main.js: CFLAGS = $(REL_FLAGS)
-$(REL_PRE)/main.js: $(addprefix $(SRC)/,$(MAIN_C)).r.bc $(SRC)/$(MAIN_PRE)
+$(REL_PRE)/main.js: $(addprefix $(SRC)/,$(MAIN_RO)) $(SRC)/$(MAIN_PRE)
 	mkdir -p $(REL_PRE)
 	$(EMCC) $(CFLAGS) $(E_FLAGS) --pre-js $(SRC)/$(MAIN_PRE) $< -o $@
 
 $(REL_PRE)/rndr.js: CFLAGS = $(REL_FLAGS)
-$(REL_PRE)/rndr.js: $(addprefix $(SRC)/,$(RNDR_C)).r.bc $(SRC)/$(RNDR_PRE)
+$(REL_PRE)/rndr.js: $(addprefix $(SRC)/,$(RNDR_RO)) $(SRC)/$(RNDR_PRE)
 	mkdir -p $(REL_PRE)
 	$(EMCC) $(CFLAGS) $(E_FLAGS) --pre-js $(SRC)/$(RNDR_PRE) $< -o $@
 
 $(DBG_PRE)/main.js: CFLAGS = $(DBG_FLAGS)
-$(DBG_PRE)/main.js: $(addprefix $(SRC)/,$(MAIN_C)).d.bc $(SRC)/$(MAIN_PRE)
+$(DBG_PRE)/main.js: $(addprefix $(SRC)/,$(MAIN_DO)) $(SRC)/$(MAIN_PRE)
 	mkdir -p $(DBG_PRE)
 	$(EMCC) $(CFLAGS) $(E_FLAGS) --pre-js $(SRC)/$(MAIN_PRE) $< -o $@
 
 $(DBG_PRE)/rndr.js: CFLAGS = $(DBG_FLAGS)
-$(DBG_PRE)/rndr.js: $(addprefix $(SRC)/,$(RNDR_C)).d.bc $(SRC)/$(RNDR_PRE)
+$(DBG_PRE)/rndr.js: $(addprefix $(SRC)/,$(RNDR_DO)) $(SRC)/$(RNDR_PRE)
 	mkdir -p $(DBG_PRE)
 	$(EMCC) $(CFLAGS) $(E_FLAGS) --pre-js $(SRC)/$(RNDR_PRE) $< -o $@
 
