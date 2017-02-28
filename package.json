@@ -1,0 +1,44 @@
+{
+  "name": "emscripten-electron-boilerplate",
+  "version": "0.1.0",
+  "description": "A boilerplate build for creating an Electron project using Emscripten (i.e., develop in C, deploy in JavaScript).",
+  "main": "./main.js",
+  "scripts": {
+    "start": "electron release/main.js",
+    "test": "ELECTRON_ENABLE_LOGGING=1 electron debug/main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jonwoodring/emscripten-electron-boilerplate.git"
+  },
+  "keywords": [
+    "Electron",
+    "Emscripten",
+    "boilerplate",
+    "c",
+    "c++",
+    "javascript"
+  ],
+  "author": "Jon Woodring <woodring.jon@gmail.com>",
+  "license": "CC0-1.0",
+  "bugs": {
+    "url": "https://github.com/jonwoodring/emscripten-electron-boilerplate/issues"
+  },
+  "homepage": "https://github.com/jonwoodring/emscripten-electron-boilerplate#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "babel-cli": "~6.23",
+    "babel-core": "~6.23",
+    "babel-loader": "~6.3",
+    "babel-preset-es2015": "~6.22",
+    "css-loader": "~0.26",
+    "electron": "~1.4",
+    "electron-packager": "~8.5",
+    "json-loader": "~0.5",
+    "octal-number-loader": "~0.1",
+    "shebang-loader": "0.0.1",
+    "style-loader": "~0.13",
+    "url-loader": "~0.5.7",
+    "webpack": "~2.2"
+  }
+}
