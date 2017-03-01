@@ -1,11 +1,11 @@
 {
   "name": "emscripten-electron-boilerplate",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A boilerplate build for creating an Electron project using Emscripten (i.e., develop in C, deploy in JavaScript).",
   "main": "./main.js",
   "scripts": {
     "start": "electron release/main.js",
-    "test": "ELECTRON_ENABLE_LOGGING=1 electron debug/main.js"
+    "test": "electron debug/main.js"
   },
   "repository": {
     "type": "git",
