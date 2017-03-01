@@ -3,7 +3,7 @@ var webpack = require("webpack")
 module.exports = [
 {
   name: "renderer",
-  entry: { rndr: './r-obj/rndr.js'},
+  entry: { rndr: './r-js/rndr.js'},
   output: {
     path: './release/',
     filename: '[name].js'
@@ -37,7 +37,7 @@ module.exports = [
 },
 {
   name: "main",
-  entry: { main: './r-obj/main.js'},
+  entry: { main: './r-js/main.js'},
   output: {
     path: './release/',
     filename: '[name].js'

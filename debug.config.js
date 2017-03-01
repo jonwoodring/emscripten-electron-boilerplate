@@ -3,7 +3,7 @@ var webpack = require("webpack")
 module.exports = [
 {
   name: "renderer",
-  entry: { rndr: './d-obj/rndr.js'},
+  entry: { rndr: './d-js/rndr.js'},
   devtool: "source-map",
   output: {
     path: './debug/',
@@ -36,7 +36,7 @@ module.exports = [
 },
 {
   name: "main",
-  entry: { main: './d-obj/main.js'},
+  entry: { main: './d-js/main.js'},
   devtool: "source-map",
   output: {
     path: './debug/',
