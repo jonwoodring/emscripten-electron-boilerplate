@@ -1,6 +1,6 @@
 {
   "name": "emscripten-electron-boilerplate",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "A boilerplate build for creating an Electron project using Emscripten (i.e., develop in C, deploy in JavaScript).",
   "main": "./main.js",
   "scripts": {

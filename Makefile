@@ -22,19 +22,19 @@ d-obj/%.bc: src/%.c
 	mkdir -p d-obj
 	$(EMCC) $(CFLAGS) $(E_FLAGS) $< -o $@
 
-r-js/main.js: r-obj/$(MAIN).bc
+r-js/main.js: r-obj/$(MAIN).bc src/main-pre.js
 	mkdir -p r-js
 	$(EMCC) $(CFLAGS) $(E_FLAGS) --pre-js src/main-pre.js r-obj/$(MAIN).bc -o r-js/main.js
 
-r-js/rndr.js: r-obj/$(RNDR).bc
+r-js/rndr.js: r-obj/$(RNDR).bc src/rndr-pre.js
 	mkdir -p r-js
 	$(EMCC) $(CFLAGS) $(E_FLAGS) --pre-js src/rndr-pre.js r-obj/$(RNDR).bc -o r-js/rndr.js
 
-d-js/main.js: d-obj/$(RNDR).bc
+d-js/main.js: d-obj/$(RNDR).bc src/main-pre.js
 	mkdir -p d-js
 	$(EMCC) $(CFLAGS) $(E_FLAGS) --pre-js src/main-pre.js d-obj/$(MAIN).bc -o d-js/main.js
 
-d-js/rndr.js: d-obj/$(RNDR).bc
+d-js/rndr.js: d-obj/$(RNDR).bc src/rndr-pre.js
 	mkdir -p d-js
 	$(EMCC) $(CFLAGS) $(E_FLAGS) --pre-js src/rndr-pre.js d-obj/$(RNDR).bc -o d-js/rndr.js
 
