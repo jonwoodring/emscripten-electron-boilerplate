@@ -1,76 +1,114 @@
+# 
+# executables
+#
+
 EMCC = emcc
 WEBPACK = node ./node_modules/.bin/webpack
 PACKAGER = node ./node_modules/.bin/electron-packager
 
+#
+# emscripen flags
+#
+
+REL_FLAGS = -O3
+DBG_FLAGS = -g
 E_FLAGS = -v --memory-init-file 0 --closure 0
+
+# 
+# webpack debug flags
+#
+
+REL_CFG = release.config.js
+DBG_CFG = debug.config.js
 W_FLAGS = --verbose --display-reasons --debug --display-modules --display-error-details --progress --colors
 
-MAIN = main
-RNDR = rndr
+#
+# source directories and files
+#
 
-all: debug
+SRC = src
 
-release: release-obj release-js release-pack
+MAIN_C = main
+RNDR_C = rndr
 
-debug: debug-obj debug-js debug-pack
+MAIN_PRE = main-pre.js
+RNDR_PRE = rndr-pre.js
 
-r-obj/%.bc: src/%.c
-	mkdir -p r-obj
+INDEX = index.html
+
+# 
+# prepack targets
+#
+
+REL_PRE = r-js
+DBG_PRE = d-js
+
+REL_PREPACK = $(REL_PRE)/main.js $(REL_PRE)/rndr.js
+DBG_PREPACK = $(DBG_PRE)/main.js $(DBG_PRE)/rndr.js
+
+# 
+# output directories
+#
+
+RELEASE = release
+DEBUG = debug
+PACK = pack
+
+#
+# build deps
+# 
+
+all: release
+
+%.r.bc: CFLAGS = $(REL_FLAGS)
+%.r.bc: %.c
 	$(EMCC) $(CFLAGS) $(E_FLAGS) $< -o $@
 
-d-obj/%.bc: src/%.c
-	mkdir -p d-obj
+%.d.bc: CFLAGS = $(DBG_FLAGS)
+%.d.bc: %.c
 	$(EMCC) $(CFLAGS) $(E_FLAGS) $< -o $@
 
-r-js/main.js: r-obj/$(MAIN).bc src/main-pre.js
-	mkdir -p r-js
-	$(EMCC) $(CFLAGS) $(E_FLAGS) --pre-js src/main-pre.js r-obj/$(MAIN).bc -o r-js/main.js
+$(REL_PRE)/main.js: CFLAGS = $(REL_FLAGS)
+$(REL_PRE)/main.js: $(addprefix $(SRC)/,$(MAIN_C)).r.bc $(SRC)/$(MAIN_PRE)
+	mkdir -p $(REL_PRE)
+	$(EMCC) $(CFLAGS) $(E_FLAGS) --pre-js $(SRC)/$(MAIN_PRE) $< -o $@
 
-r-js/rndr.js: r-obj/$(RNDR).bc src/rndr-pre.js
-	mkdir -p r-js
-	$(EMCC) $(CFLAGS) $(E_FLAGS) --pre-js src/rndr-pre.js r-obj/$(RNDR).bc -o r-js/rndr.js
+$(REL_PRE)/rndr.js: CFLAGS = $(REL_FLAGS)
+$(REL_PRE)/rndr.js: $(addprefix $(SRC)/,$(RNDR_C)).r.bc $(SRC)/$(RNDR_PRE)
+	mkdir -p $(REL_PRE)
+	$(EMCC) $(CFLAGS) $(E_FLAGS) --pre-js $(SRC)/$(RNDR_PRE) $< -o $@
 
-d-js/main.js: d-obj/$(RNDR).bc src/main-pre.js
-	mkdir -p d-js
-	$(EMCC) $(CFLAGS) $(E_FLAGS) --pre-js src/main-pre.js d-obj/$(MAIN).bc -o d-js/main.js
+$(DBG_PRE)/main.js: CFLAGS = $(DBG_FLAGS)
+$(DBG_PRE)/main.js: $(addprefix $(SRC)/,$(MAIN_C)).d.bc $(SRC)/$(MAIN_PRE)
+	mkdir -p $(DBG_PRE)
+	$(EMCC) $(CFLAGS) $(E_FLAGS) --pre-js $(SRC)/$(MAIN_PRE) $< -o $@
 
-d-js/rndr.js: d-obj/$(RNDR).bc src/rndr-pre.js
-	mkdir -p d-js
-	$(EMCC) $(CFLAGS) $(E_FLAGS) --pre-js src/rndr-pre.js d-obj/$(RNDR).bc -o d-js/rndr.js
+$(DBG_PRE)/rndr.js: CFLAGS = $(DBG_FLAGS)
+$(DBG_PRE)/rndr.js: $(addprefix $(SRC)/,$(RNDR_C)).d.bc $(SRC)/$(RNDR_PRE)
+	mkdir -p $(DBG_PRE)
+	$(EMCC) $(CFLAGS) $(E_FLAGS) --pre-js $(SRC)/$(RNDR_PRE) $< -o $@
 
-release-obj: CFLAGS = -O3
-release-obj: r-obj/$(MAIN).bc r-obj/$(RNDR).bc
+release: $(REL_PREPACK)
+	$(WEBPACK) --config $(REL_CFG) 
+	cp $(SRC)/$(INDEX) $(RELEASE)
 
-debug-obj: CFLAGS = -g
-debug-obj: d-obj/$(MAIN).bc d-obj/$(RNDR).bc
+debug: $(DBG_PREPACK)
+	$(WEBPACK) $(W_FLAGS) --config $(DBG_CFG)
+	cp $(SRC)/$(INDEX) $(DEBUG)
 
-release-js: CFLAGS = -O3
-release-js: r-js/main.js r-js/rndr.js
+cc4watch: $(DBG_PREPACK)
 
-debug-js: CFLAGS = -g
-debug-js: d-js/main.js d-js/rndr.js
+watch: cc4watch
+	$(WEBPACK) $(W_FLAGS) --watch --config $(DBG_CFG)
 
-release-pack: release-js
-	$(WEBPACK) --config release.config.js 
-	cp src/*.html release
-
-debug-pack: debug-js
-	$(WEBPACK) $(W_FLAGS) --config debug.config.js
-	cp src/*.html debug
-
-cc4watch: debug-js
-
-watch: debug-js
-	$(WEBPACK) $(W_FLAGS) --watch --config debug.config.js
+install: release
+	cp package.json $(RELEASE)
+	$(PACKAGER) ./$(RELEASE) --out $(PACK)
 
 dist: release
-	cp package.json release
-	$(PACKAGER) ./release --out pack
-
-dist-all: release
-	cp package.json release 
-	$(PACKAGER) ./release --all --out pack
+	cp package.json $(RELEASE) 
+	$(PACKAGER) ./$(RELEASE) --all --out $(PACK)
 
 clean: 
-	rm -rf pack release debug d-obj r-obj d-js r-js
+	rm -rf $(PACK) $(RELEASE) $(DEBUG) $(DBG_PRE) $(REL_PRE) $(SRC)/*.d.bc $(SRC)/*.r.bc
 
