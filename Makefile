@@ -6,15 +6,16 @@ MAKEFLAGS += --no-builtin-rules
 #
 
 EMCC = emcc
-WEBPACK = node ./node_modules/.bin/webpack
+WEBPACK = node --max_old_space_size=8192 ./node_modules/.bin/webpack --progress
 PACKAGER = node ./node_modules/.bin/electron-packager
+MEMORY = 16777216
 
 #
 # emscripen flags
 #
 
-REL_FLAGS = -O3
-DBG_FLAGS = -g
+REL_FLAGS = -Os -s TOTAL_MEMORY=$(MEMORY)
+DBG_FLAGS = -g -s TOTAL_MEMORY=$(MEMORY)
 E_FLAGS = -v --memory-init-file 0 --closure 0
 
 # 
@@ -23,7 +24,7 @@ E_FLAGS = -v --memory-init-file 0 --closure 0
 
 REL_CFG = release.config.js
 DBG_CFG = debug.config.js
-W_FLAGS = --verbose --display-reasons --debug --display-modules --display-error-details --progress --colors
+W_FLAGS = --verbose --display-reasons --debug --display-modules --display-error-details --colors
 
 #
 # source directories and files
@@ -81,22 +82,23 @@ all: release
 $(REL_PRE)/main.js: CFLAGS = $(REL_FLAGS)
 $(REL_PRE)/main.js: $(addprefix $(SRC)/,$(MAIN_RO)) $(SRC)/$(MAIN_PRE)
 	mkdir -p $(REL_PRE)
-	$(EMCC) $(CFLAGS) $(E_FLAGS) --pre-js $(SRC)/$(MAIN_PRE) $< -o $@
+	$(EMCC) $(CFLAGS) $(E_FLAGS) --pre-js $(SRC)/$(MAIN_PRE) $(filter-out $(SRC)/$(MAIN_PRE),$^) -o $@
 
 $(REL_PRE)/rndr.js: CFLAGS = $(REL_FLAGS)
 $(REL_PRE)/rndr.js: $(addprefix $(SRC)/,$(RNDR_RO)) $(SRC)/$(RNDR_PRE)
 	mkdir -p $(REL_PRE)
-	$(EMCC) $(CFLAGS) $(E_FLAGS) --pre-js $(SRC)/$(RNDR_PRE) $< -o $@
+	$(EMCC) $(CFLAGS) $(E_FLAGS) --pre-js $(SRC)/$(RNDR_PRE) $(filter-out $(SRC)/$(RNDR_PRE),$^) -o $@
 
 $(DBG_PRE)/main.js: CFLAGS = $(DBG_FLAGS)
 $(DBG_PRE)/main.js: $(addprefix $(SRC)/,$(MAIN_DO)) $(SRC)/$(MAIN_PRE)
+	echo $<
 	mkdir -p $(DBG_PRE)
-	$(EMCC) $(CFLAGS) $(E_FLAGS) --pre-js $(SRC)/$(MAIN_PRE) $< -o $@
+	$(EMCC) $(CFLAGS) $(E_FLAGS) --pre-js $(SRC)/$(MAIN_PRE) $(filter-out $(SRC)/$(MAIN_PRE),$^) -o $@
 
 $(DBG_PRE)/rndr.js: CFLAGS = $(DBG_FLAGS)
 $(DBG_PRE)/rndr.js: $(addprefix $(SRC)/,$(RNDR_DO)) $(SRC)/$(RNDR_PRE)
 	mkdir -p $(DBG_PRE)
-	$(EMCC) $(CFLAGS) $(E_FLAGS) --pre-js $(SRC)/$(RNDR_PRE) $< -o $@
+	$(EMCC) $(CFLAGS) $(E_FLAGS) --pre-js $(SRC)/$(RNDR_PRE) $(filter-out $(SRC)/$(RNDR_PRE),$^) -o $@
 
 release: $(REL_PREPACK)
 	$(WEBPACK) --config $(REL_CFG) 

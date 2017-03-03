@@ -15,6 +15,7 @@ module.exports = [
       {
         test: /\.js$/,
         loader: "shebang-loader!babel-loader!octal-number-loader",
+        exclude: /.\/r-js/
       },
       {
         test: /\.css$/,
@@ -49,6 +50,7 @@ module.exports = [
       {
         test: /\.js$/,
         loader: "shebang-loader!babel-loader!octal-number-loader",
+        exclude: /.\/r-js/
       },
       {
         test: /\.css$/,
