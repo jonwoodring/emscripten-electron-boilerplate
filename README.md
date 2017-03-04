@@ -5,7 +5,7 @@ using Emscripten (i.e., C) as the source.
 
 - Electron for the application package
 - combination of C and JS as the application source
-- webpack for tree shaking, packing, uglify, watching, and babel
+- webpack for tree shaking, packing, uglify, watching, and babel of JS 
 - Emscripten and make for compiling
 - electron-packager to create binary packages for platforms
 
@@ -17,8 +17,13 @@ Notes
 - `make` expects Emscripten to be installed (i.e., `emcc` is on the `$PATH`)
   - I tested on 1.37.3 -- I know that 1.35 doesn't work (there will be an
     javascript error when it runs)
+  - Emscripted C is not run through `babel` -- it's only for JS libraries
+  - `octree-number-loader` is available in case non-standard octal numbers
+    appear in the Emscripted C (octals in Javascript have to be 0o0001 now)
 - `babel` is configured in `.babelrc`
 - `webpack` is configured in `release.config.js` and `debug.config.js`
+- an example external code is linked against, using `sqlite3` as the example 
+  - `make sqlite` to get it ready before building
 
 ---
 

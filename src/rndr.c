@@ -11,4 +11,6 @@ int main(int argc, char* argv[])
   fflush(stdout);
 
   emscripten_set_main_loop(loop, 0, 1);
+
+  return 0; // should never happen
 }
