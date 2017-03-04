@@ -23,7 +23,7 @@ Notes
 - `babel` is configured in `.babelrc`
 - `webpack` is configured in `release.config.js` and `debug.config.js`
 - an example external code is linked against, using `sqlite3` as the example 
-  - `make sqlite` to get it ready before building
+  - it is fetched from the web and built as a dependency
 
 ---
 
