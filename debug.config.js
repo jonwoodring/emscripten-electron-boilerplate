@@ -13,7 +13,7 @@ module.exports = [
     loaders: [
       {
         test: /\.js$/,
-        loader: "shebang-loader!babel-loader!octal-number-loader",
+        loader: "babel-loader",
         exclude: /.\/d-js/
       },
       {
@@ -47,7 +47,7 @@ module.exports = [
     loaders: [
       {
         test: /\.js$/,
-        loader: "shebang-loader!babel-loader!octal-number-loader",
+        loader: "babel-loader",
         exclude: /.\/d-js/
       },
       {

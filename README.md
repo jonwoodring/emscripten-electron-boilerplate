@@ -3,15 +3,20 @@
 This is a boilerplate build for starting Electron projects
 using Emscripten (i.e., C) as the source.
 
-- Electron for the application package
 - combination of C and JS as the application source
+- Electron for the application package
+- Emscripten for compiling
+- make for dependency building
 - webpack for tree shaking, packing, uglify, watching, and babel of JS 
-- Emscripten and make for compiling
 - electron-packager to create binary packages for platforms
 
 Notes
 =====
 
+- make sure to do an `npm install` first, of course
+- the default make rule `all` will build an Electron package
+  - this should test release path building from soup to nuts
+  - `make debug` is for development testing and should be faster
 - compiling uses `make` and running the tests uses `npm`
   - see `Makefile` and `package.json`
 - `make` expects Emscripten to be installed (i.e., `emcc` is on the `$PATH`)

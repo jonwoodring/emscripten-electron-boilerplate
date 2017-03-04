@@ -1,7 +1,7 @@
 MAKEFLAGS += --no-builtin-rules
 .SUFFIXES:
 	
-all: release
+all: exe
 
 # 
 # executables
@@ -108,11 +108,11 @@ $(LIBS)/$(SQL_ZIP):
 $(LIBS)/$(SQL_VER): $(LIBS)/$(SQL_ZIP)
 	cd $(LIBS) ; $(UNZIP) $(SQL_ZIP)
 
-$(REL_LIBS)/sqlite3.bc: | $(LIBS)/$(SQL_VER)
+$(REL_LIBS)/sqlite3.bc: $(LIBS)/$(SQL_VER)
 	mkdir -p $(REL_LIBS)
 	$(EMCC) $(REL_FLAGS) $(E_FLAGS) $(SQL_FLAGS) -o $(REL_LIBS)/sqlite3.bc $(LIBS)/$(SQL_VER)/sqlite3.c
 
-$(DBG_LIBS)/sqlite3.bc: | $(LIBS)/$(SQL_VER)
+$(DBG_LIBS)/sqlite3.bc: $(LIBS)/$(SQL_VER)
 	mkdir -p $(DBG_LIBS)
 	$(EMCC) $(DBG_FLAGS) $(E_FLAGS) $(SQL_FLAGS) -o $(DBG_LIBS)/sqlite3.bc $(LIBS)/$(SQL_VER)/sqlite3.c
 
@@ -129,7 +129,7 @@ clean-sqlite:
 %.r.bc: %.c $(MAIN_REL) $(RNDR_REL)
 	$(EMCC) $(CFLAGS) $(E_FLAGS) $(INCS) $< -o $@
 
-# make debug bytecote
+# make debug bytecode
 %.d.bc: %.c $(MAIN_DBG) $(RNDR_DBG)
 	$(EMCC) $(CFLAGS) $(E_FLAGS) $(INCS) $< -o $@
 
