@@ -18,7 +18,7 @@ Notes
   - I tested on 1.37.3 -- I know that 1.35 doesn't work (there will be an
     javascript error when it runs)
   - Emscripted C is not run through `babel` -- it's only for JS libraries
-  - `octree-number-loader` is available in case non-standard octal numbers
+  - `octal-number-loader` is available in case non-standard octal numbers
     appear in the Emscripted C (octals in Javascript have to be 0o0001 now)
 - `babel` is configured in `.babelrc`
 - `webpack` is configured in `release.config.js` and `debug.config.js`
