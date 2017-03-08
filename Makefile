@@ -19,9 +19,9 @@ UNZIP = unzip
 
 # NOTE: add include and library directories here
 SEARCH = -Ilib/sqlite-amalgamation-3170000/
-REL_FLAGS = -Os $(SEARCH)
-DBG_FLAGS = -g $(SEARCH)
-JS_FLAGS = -s TOTAL_MEMORY=33554432
+REL_FLAGS = -Os $(SEARCH) -s ASSERTIONS=0 
+DBG_FLAGS = -g -Os $(SEARCH) -s STACK_OVERFLOW_CHECK=2 -s SAFE_HEAP=1 -s ASSERTIONS=2 -s ABORTING_MALLOC=1 -s VERBOSE=1
+JS_FLAGS = -s NO_DYNAMIC_EXECUTION=1 -s TOTAL_MEMORY=33554432
 E_FLAGS = -v --memory-init-file 0 --closure 0
 
 # 
@@ -41,6 +41,9 @@ SRC = src
 # NOTE: add additional c source files here
 MAIN = main
 RNDR = rndr
+
+MAIN_FLAGS = -s EXPORTED_FUNCTIONS="['_main']"
+RNDR_FLAGS = -s EXPORTED_FUNCTIONS="['_main']"
 
 MAIN_PRE = main-pre.js
 RNDR_PRE = rndr-pre.js
@@ -137,25 +140,25 @@ clean-sqlite:
 $(REL_PRE)/main.js: CFLAGS = $(REL_FLAGS)
 $(REL_PRE)/main.js: $(addprefix $(SRC)/,$(MAIN_RO)) $(MAIN_REL) $(SRC)/$(MAIN_PRE) 
 	mkdir -p $(REL_PRE)
-	$(EMCC) $(CFLAGS) $(JS_FLAGS) $(E_FLAGS) --pre-js $(SRC)/$(MAIN_PRE) $(filter-out $(SRC)/$(MAIN_PRE),$^) -o $@
+	$(EMCC) $(CFLAGS) $(JS_FLAGS) $(MAIN_FLAGS) $(E_FLAGS) --pre-js $(SRC)/$(MAIN_PRE) $(filter-out $(SRC)/$(MAIN_PRE),$^) -o $@
 
 # make release rndr.js
 $(REL_PRE)/rndr.js: CFLAGS = $(REL_FLAGS)
 $(REL_PRE)/rndr.js: $(addprefix $(SRC)/,$(RNDR_RO)) $(RDNR_REL) $(SRC)/$(RNDR_PRE)
 	mkdir -p $(REL_PRE)
-	$(EMCC) $(CFLAGS) $(JS_FLAGS) $(E_FLAGS) --pre-js $(SRC)/$(RNDR_PRE) $(filter-out $(SRC)/$(RNDR_PRE),$^) -o $@
+	$(EMCC) $(CFLAGS) $(JS_FLAGS) $(RNDR_FLAGS) $(E_FLAGS) --pre-js $(SRC)/$(RNDR_PRE) $(filter-out $(SRC)/$(RNDR_PRE),$^) -o $@
 
 # make debug main.js
 $(DBG_PRE)/main.js: CFLAGS = $(DBG_FLAGS)
 $(DBG_PRE)/main.js: $(addprefix $(SRC)/,$(MAIN_DO)) $(MAIN_DBG) $(SRC)/$(MAIN_PRE)
 	mkdir -p $(DBG_PRE)
-	$(EMCC) $(CFLAGS) $(JS_FLAGS) $(E_FLAGS) --pre-js $(SRC)/$(MAIN_PRE) $(filter-out $(SRC)/$(MAIN_PRE),$^) -o $@
+	$(EMCC) $(CFLAGS) $(JS_FLAGS) $(MAIN_FLAGS) $(E_FLAGS) --pre-js $(SRC)/$(MAIN_PRE) $(filter-out $(SRC)/$(MAIN_PRE),$^) -o $@
 
 # make debug rndr.js
 $(DBG_PRE)/rndr.js: CFLAGS = $(DBG_FLAGS)
 $(DBG_PRE)/rndr.js: $(addprefix $(SRC)/,$(RNDR_DO)) $(RNDR_DBG) $(SRC)/$(RNDR_PRE)
 	mkdir -p $(DBG_PRE)
-	$(EMCC) $(CFLAGS) $(JS_FLAGS) $(E_FLAGS) --pre-js $(SRC)/$(RNDR_PRE) $(filter-out $(SRC)/$(RNDR_PRE),$^) -o $@
+	$(EMCC) $(CFLAGS) $(JS_FLAGS) $(RNDR_FLAGS) $(E_FLAGS) --pre-js $(SRC)/$(RNDR_PRE) $(filter-out $(SRC)/$(RNDR_PRE),$^) -o $@
 
 # webpack release
 release: $(REL_PREPACK)
@@ -172,6 +175,7 @@ cc: $(DBG_PREPACK)
 
 # webpack watching
 watch: cc
+	cp $(SRC)/$(INDEX) $(DEBUG)
 	$(WEBPACK) $(W_FLAGS) --watch --config $(DBG_CFG)
 
 # make an electron distributable for this platform

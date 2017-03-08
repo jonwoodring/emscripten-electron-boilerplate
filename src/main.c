@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
     sqlite3_free(error);
   }
 
-  r = sqlite3_exec(db, "select * from foo", print_rows, 0, &error);
+  r = sqlite3_exec(db, "select * from foo", 0, 0, &error);
   if (r) {
     fprintf(stderr, "Unable to select all from foo: %s\n",
             error);
