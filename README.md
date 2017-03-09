@@ -14,11 +14,11 @@ Notes
 =====
 
 - make sure to do an `npm install` first, of course
+- compiling uses `make` and running the tests uses `npm`
+  - see `Makefile` and `package.json` and configure as necessary
 - the default make rule `all` will build an Electron package
   - this should test release path building from soup to nuts
-  - `make debug` is for development testing and should be faster
-- compiling uses `make` and running the tests uses `npm`
-  - see `Makefile` and `package.json`
+  - `make lint`, `make cc`, and `make watch` are useful development commands
 - `make` expects Emscripten to be installed (i.e., `emcc` is on the `$PATH`)
   - I tested on 1.37.3 -- I know that 1.35 doesn't work (there will be an
     javascript error when it runs)
@@ -29,6 +29,15 @@ Notes
 - `webpack` is configured in `release.config.js` and `debug.config.js`
 - an example external code is linked against, using `sqlite3` as the example 
   - it is fetched from the web and built as a dependency
+- if you happen to change how things are compiled *make absolutely sure*
+  that all of your LLVM bytecode files are compiled with the same -O flag --
+  otherwise, you'll get lots of fun fatal run-time errors - this includes
+  external libraries
+
+TODO
+====
+
+- maybe add a `make` command that installs `emcc` -- maybe...
 
 ---
 
